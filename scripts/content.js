@@ -119,6 +119,10 @@ function setup() {
   localStorage.setItem(localStorageName, JSON.stringify(coverage));
 }
 
+function getUICoverage() {
+    return JSON.parse(localStorage.getItem(localStorageName) || "{}")
+}
+
 // When to get elements and add listeners.
 // Definitely when page loads. Then on user interaction (click),
 // a page may show new elements, so recalculate then as well.
