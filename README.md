@@ -28,6 +28,7 @@ Will be formatted as follows:
   }
 }
 ```
+![Screenshot 2023-06-01 at 1 03 13 PM](https://github.com/codambro/chrome-ui-coverage/assets/87312005/be9401d1-6a4f-469f-8f2f-c955efa463b0)
 
 ## Shortcomings
 - Currently, repeat elements per page are itemized individually. For example, a table with 100 entries, each with a checkbox, will have 100 individual elements tracked in the coverage data, one for each checkbox. Leads to many "false" misses.
