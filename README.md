@@ -1,8 +1,9 @@
 # chrome-ui-coverage
-Track UI coverage in a chrome browser
+Track UI coverage in a Chrome browser.
 
-**Warning**
-May slow down UI while running.
+> **Warning**
+> 
+> May slow down UI while running.
 
 ## Setup
 This is still in development, so extension needs to be ran in developer mode.
