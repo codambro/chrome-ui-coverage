@@ -105,9 +105,14 @@ function setup() {
           console.log(`Adding event listener: ${selector}, ${eventType}`);
           // add our own listener as well
           selector.addEventListener(eventType, () => {
-            console.log(`Event detected (${eventType}): ${selector.outerHTML}`);
+            console.log(`Event detected on ${page} (${eventType}): ${selector.outerHTML}`);
             let c = JSON.parse(localStorage.getItem(localStorageName));
-            c[page][selector.outerHTML][eventType] = true;
+            if (!(selector.outerHTML in c[page])) {
+              // handle case where outerHTML changed on selector
+              c[page][selector.outerHTML] = { [eventType]: true };
+            } else {
+              c[page][selector.outerHTML][eventType] = true;
+            }
             localStorage.setItem(localStorageName, JSON.stringify(c));
           });
         }
