@@ -93,28 +93,33 @@ function setup() {
       }
     }
     if (eventListeners.length > 0) {
-      //console.log(`${selector.outerHTML}: ${eventListeners}`);
-      if (!(selector.outerHTML in coverage[page])) {
-        coverage[page][selector.outerHTML] = {};
+      const oHTML = selector.outerHTML.replace(/ coveragetracker_[a-z]+="true"/, "");
+      //console.log(`${oHTML}: ${eventListeners}`);
+      if (!(oHTML in coverage[page])) {
+        coverage[page][oHTML] = {};
       }
       for (const eventType of eventListeners) {
         // element `selector` has one or more listeners for `eventType`
         //console.log(eventType);
-        if (!(eventType in coverage[page][selector.outerHTML])) {
-          coverage[page][selector.outerHTML][eventType] = false;
+        if (!(eventType in coverage[page][oHTML])) {
+          coverage[page][oHTML][eventType] = false;
+        }
+        if (!selector.hasAttribute(`coveragetracker_${eventType}`)) {
           console.log(`Adding event listener: ${selector}, ${eventType}`);
           // add our own listener as well
           selector.addEventListener(eventType, () => {
-            console.log(`Event detected on ${page} (${eventType}): ${selector.outerHTML}`);
+            const targetOuterHTML = selector.outerHTML.replace(` coveragetracker_${eventType}="true"`, "");
+            console.log(`Event detected on ${page} (${eventType}): ${targetOuterHTML}`);
             let c = JSON.parse(localStorage.getItem(localStorageName));
-            if (!(selector.outerHTML in c[page])) {
+            if (!(targetOuterHTML in c[page])) {
               // handle case where outerHTML changed on selector
-              c[page][selector.outerHTML] = { [eventType]: true };
+              c[page][targetOuterHTML] = { [eventType]: true };
             } else {
-              c[page][selector.outerHTML][eventType] = true;
+              c[page][targetOuterHTML][eventType] = true;
             }
             localStorage.setItem(localStorageName, JSON.stringify(c));
           });
+          selector.setAttribute(`coveragetracker_${eventType}`, 'true');
         }
       }
     } else {
