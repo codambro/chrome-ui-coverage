@@ -105,7 +105,7 @@ function setup() {
           coverage[page][oHTML][eventType] = false;
         }
         if (!selector.hasAttribute(`coveragetracker_${eventType}`)) {
-          console.log(`Adding event listener: ${selector}, ${eventType}`);
+          console.log(`Adding event listener on ${page}: ${oHTML}, ${eventType}`);
           // add our own listener as well
           selector.addEventListener(eventType, () => {
             const targetOuterHTML = selector.outerHTML.replace(` coveragetracker_${eventType}="true"`, "");
