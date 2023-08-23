@@ -34,6 +34,9 @@
 // Non-user triggered events
 const ignoreEvents = ["popstate", "unhandledrejection", "error"];
 
+// Assume these elements always have click events
+const forceClickEvents = ["a", "button", "input"];
+
 const localStorageName = "ui-coverage";
 
 /* Get listeners on an individual element */
@@ -62,6 +65,26 @@ function myGetEventListeners(element) {
         }
       }
     }
+  }
+
+  // certain element types we always expect to be clickable
+  if (!listeners.length) {
+    for (const attr of forceClickEvents) {
+      if (element.outerHTML.startsWith(`<${attr} `)) {
+        listeners.push("click");
+        break;
+      }
+    }
+  }
+
+  // If style turns cursor into pointer, assume clickable
+  if (
+    !listeners.includes("click") &&
+    !listeners.includes("onclick") &&
+    window.getComputedStyle(element).cursor == "pointer" &&
+    window.getComputedStyle(element.parentNode).cursor != "pointer"
+  ) {
+    listeners.push("click");
   }
 
   return [...new Set(listeners)].map(x => x.replace(/^(on)/, "")).filter(l => !ignoreEvents.includes(l));
@@ -93,15 +116,6 @@ function setup(setupEvent) {
   }
   for (const selector of document.querySelectorAll("*")) {
     const eventListeners = myGetEventListeners(selector);
-    // force some
-    if (!eventListeners.length) {
-      for (const attr of ["a", "button", "input"]) {
-        if (selector.outerHTML.startsWith(`<${attr} `)) {
-          eventListeners.push("click");
-          break;
-        }
-      }
-    }
     if (eventListeners.length > 0) {
       const oHTML = selector.outerHTML.replace(/ coveragetracker_[a-z]+="true"/g, "");
       //console.log(`${oHTML}: ${eventListeners}`);
