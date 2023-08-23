@@ -68,14 +68,24 @@ function myGetEventListeners(element) {
 }
 
 /* get list of all triggerable elements and add listeners */
-function setup() {
+let needMouseMove = false;
+function setup(setupEvent) {
+  if (setupEvent.type == "mousemove" && !needMouseMove) {
+    return;
+  } else if (setupEvent.type != "mousemove") {
+    needMouseMove = true;
+  } else if (setupEvent.type == "mousemove") {
+    needMouseMove = false;
+  }
+  console.log(`Coverage.Setup() - ${setupEvent.type} - ${setupEvent.target.outerHTML}`);
   const coverageStr = localStorage.getItem(localStorageName);
   const coverage = coverageStr ? JSON.parse(coverageStr) : {};
   let page = document.location.href
     .split("?")[0]
     .replace(/\/[0-9]+/g, "/[num]")
-    .replace(/\/\//g, "/");
-  if (page.endsWith("/")) {
+    .replace(/\/\//g, "/")
+    .replace(/https:/g, "https:/");
+  if (page.endsWith("/") || page.endsWith("#")) {
     page = page.slice(0, -1);
   }
   if (!(page in coverage)) {
@@ -93,7 +103,7 @@ function setup() {
       }
     }
     if (eventListeners.length > 0) {
-      const oHTML = selector.outerHTML.replace(/ coveragetracker_[a-z]+="true"/, "");
+      const oHTML = selector.outerHTML.replace(/ coveragetracker_[a-z]+="true"/g, "");
       //console.log(`${oHTML}: ${eventListeners}`);
       if (!(oHTML in coverage[page])) {
         coverage[page][oHTML] = {};
@@ -105,10 +115,10 @@ function setup() {
           coverage[page][oHTML][eventType] = false;
         }
         if (!selector.hasAttribute(`coveragetracker_${eventType}`)) {
-          console.log(`Adding event listener on ${page}: ${oHTML}, ${eventType}`);
+          console.log(`Adding event listener on ${page} (${eventType}): ${oHTML}`);
           // add our own listener as well
           selector.addEventListener(eventType, () => {
-            const targetOuterHTML = selector.outerHTML.replace(` coveragetracker_${eventType}="true"`, "");
+            const targetOuterHTML = selector.outerHTML.replaceAll(` coveragetracker_${eventType}="true"`, "");
             console.log(`Event detected on ${page} (${eventType}): ${targetOuterHTML}`);
             let c = JSON.parse(localStorage.getItem(localStorageName));
             if (!(targetOuterHTML in c[page])) {
@@ -118,6 +128,7 @@ function setup() {
               c[page][targetOuterHTML][eventType] = true;
             }
             localStorage.setItem(localStorageName, JSON.stringify(c));
+            //console.log(`Event logged on ${page} (${eventType}): ${targetOuterHTML}`);
           });
           selector.setAttribute(`coveragetracker_${eventType}`, 'true');
         }
@@ -138,3 +149,4 @@ function getUICoverage() {
 // a page may show new elements, so recalculate then as well.
 window.addEventListener("load", setup);
 window.addEventListener("click", setup);
+window.addEventListener("mousemove", setup);
