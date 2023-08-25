@@ -34,5 +34,6 @@ Will be formatted as follows:
 
 ## Shortcomings
 - Currently, repeat elements per page are itemized individually. For example, a table with 100 entries, each with a checkbox, will have 100 individual elements tracked in the coverage data, one for each checkbox. Leads to many "false" misses.
+- If an element's CSS attributes change, either while using the page or upon a page reload, it will be itemized multiple times.
 - Elements that appear on every page, such as a top navigation bar, will be repeatedly itemized on every page in the tracking data.
 - Tracked data is cleared between web domains or if the browser is closed.
