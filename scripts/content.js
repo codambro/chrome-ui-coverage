@@ -31,6 +31,9 @@
  * A value of "true" next to an event means the event was triggered during testing.
  */
 
+// add outlines to elements
+const enableColors = false;
+
 // Non-user triggered events
 const ignoreEvents = ["popstate", "unhandledrejection", "error"];
 
@@ -117,7 +120,12 @@ function setup(setupEvent) {
   for (const selector of document.querySelectorAll("*")) {
     const eventListeners = myGetEventListeners(selector);
     if (eventListeners.length > 0) {
-      const oHTML = selector.outerHTML.replace(/ coveragetracker_[a-z]+="true"/g, "");
+      const oHTML = selector.outerHTML.replace(/\s?coveragetracker_[a-z]+="true"/g, "");
+      if (enableColors) {
+        oHTML = oHTML.replace(/;?\s?outline: red solid 3px;?/g, "");
+        oHTML = oHTML.replace(/;?\s?outline: green solid 3px;?/g, "");
+        oHTML = oHTML.replace(/\s?style="\s?"/g, "");
+      }
       //console.log(`${oHTML}: ${eventListeners}`);
       if (!(oHTML in coverage[page])) {
         coverage[page][oHTML] = {};
@@ -130,9 +138,22 @@ function setup(setupEvent) {
         }
         if (!selector.hasAttribute(`coveragetracker_${eventType}`)) {
           console.log(`Adding event listener on ${page} (${eventType}): ${oHTML}`);
+          if (enableColors) {
+            if (!coverage[page][oHTML][eventType]) {
+              selector.style.outline = "red solid 3px";
+            } else {
+              selector.style.outline = "green solid 3px";
+            }
+          }
           // add our own listener as well
           selector.addEventListener(eventType, () => {
             const targetOuterHTML = selector.outerHTML.replaceAll(` coveragetracker_${eventType}="true"`, "");
+            if (enableColors) {
+              targetOuterHTML = targetOuterHTML.replace(/;?\s?outline: red solid 3px;?/g, "");
+              targetOuterHTML = targetOuterHTML.replace(/;?\s?outline: green solid 3px;?/g, "");
+              targetOuterHTML = targetOuterHTML.replace(/\s?style="\s?"/g, "");
+              selector.style.outline = "green solid 3px";
+            }
             console.log(`Event detected on ${page} (${eventType}): ${targetOuterHTML}`);
             let c = JSON.parse(localStorage.getItem(localStorageName));
             if (!(targetOuterHTML in c[page])) {
