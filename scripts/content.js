@@ -32,7 +32,7 @@
  */
 
 // add outlines to elements
-const enableColors = false;
+const enableColors = true;
 
 // Non-user triggered events
 const ignoreEvents = ["popstate", "unhandledrejection", "error"];
@@ -120,7 +120,7 @@ function setup(setupEvent) {
   for (const selector of document.querySelectorAll("*")) {
     const eventListeners = myGetEventListeners(selector);
     if (eventListeners.length > 0) {
-      const oHTML = selector.outerHTML.replace(/\s?coveragetracker_[a-z]+="true"/g, "");
+      let oHTML = selector.outerHTML.replace(/\s?coveragetracker_[a-z]+="true"/g, "");
       if (enableColors) {
         oHTML = oHTML.replace(/;?\s?outline: red solid 3px;?/g, "");
         oHTML = oHTML.replace(/;?\s?outline: green solid 3px;?/g, "");
@@ -147,7 +147,7 @@ function setup(setupEvent) {
           }
           // add our own listener as well
           selector.addEventListener(eventType, () => {
-            const targetOuterHTML = selector.outerHTML.replaceAll(` coveragetracker_${eventType}="true"`, "");
+            let targetOuterHTML = selector.outerHTML.replaceAll(` coveragetracker_${eventType}="true"`, "");
             if (enableColors) {
               targetOuterHTML = targetOuterHTML.replace(/;?\s?outline: red solid 3px;?/g, "");
               targetOuterHTML = targetOuterHTML.replace(/;?\s?outline: green solid 3px;?/g, "");
