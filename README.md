@@ -10,8 +10,8 @@ This is still in development, so extension needs to be ran in developer mode.
 
 - Clone repo locally
 - In chrome browser, navigate to `chrome://extensions/`
-- In top left, enable "Developer mode"
-- In top right, click "Load unpacked"
+- In top right, enable "Developer mode"
+- In top left, click "Load unpacked"
 - Select the location to this repo (chrome-ui-coverage)
 
 ## Retrieving tracking data
