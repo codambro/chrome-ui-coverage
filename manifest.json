@@ -8,5 +8,11 @@
       "js": ["scripts/content.js"],
       "matches": ["<all_urls>"]
     }
-  ]
+  ],
+  "permissions": [
+    "contextMenus"
+  ],
+  "background": {
+    "service_worker": "scripts/download.js"
+  }
 }

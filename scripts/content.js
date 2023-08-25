@@ -32,7 +32,7 @@
  */
 
 // add outlines to elements
-const enableColors = true;
+let enableColors = localStorage.getItem("coverage-colors") == "true";
 
 // Non-user triggered events
 const ignoreEvents = ["popstate", "unhandledrejection", "error"];
@@ -175,13 +175,40 @@ function setup(setupEvent) {
   localStorage.setItem(localStorageName, JSON.stringify(coverage));
 }
 
-function getUICoverage() {
-    return JSON.parse(localStorage.getItem(localStorageName) || "{}")
-}
-
 // When to get elements and add listeners.
 // Definitely when page loads. Then on user interaction (click),
 // a page may show new elements, so recalculate then as well.
 window.addEventListener("load", setup);
 window.addEventListener("click", setup);
 window.addEventListener("mousemove", setup);
+
+// Support downloading raw coverage report data
+function getUICoverage() {
+    return JSON.parse(localStorage.getItem(localStorageName) || "{}")
+}
+
+async function writeCoverageFile() {
+   const downloadBtn = document.createElement("a");
+   downloadBtn.style = "display: none";
+   document.body.appendChild(downloadBtn);
+   const blobData = new Blob([JSON.stringify(getUICoverage(), undefined, 2)], { type: "application/json"});
+   downloadBtn.href = window.URL.createObjectURL(blobData);
+   downloadBtn.download = "coverage.json";
+   downloadBtn.click();
+   window.URL.revokeObjectURL(downloadBtn.href);
+   downloadBtn.remove();
+}
+
+// Communication with dropdown menu on extension
+chrome.runtime.onMessage.addListener(
+  function(request, sender, sendResponse) {
+    if (request.task == "download") {
+      writeCoverageFile();
+    } else if (request.task = "toggleColors") {
+      const currentlyEnabled = localStorage.getItem("coverage-colors") == "true";
+      localStorage.setItem("coverage-colors", currentlyEnabled ? "false" : "true");
+      enableColors = !currentlyEnabled;
+      window.location.reload();
+    }
+  }
+)

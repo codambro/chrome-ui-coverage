@@ -15,10 +15,7 @@ This is still in development, so extension needs to be ran in developer mode.
 - Select the location to this repo (chrome-ui-coverage)
 
 ## Retrieving tracking data
-After enabling extension, tracking data will be updated automatically. To retrieve data, open the chrome console by right-clicking the page, selecting "Inspect", then choose "Console" in the top tab.
-Run the command `JSON.parse(localStorage.getItem("ui-coverage") || "{}")` to get the current coverage report.
-
-Will be formatted as follows:
+After enabling extension, tracking data will be updated automatically. To retrieve data, click the extension button in the top-right of the browser and select `Download Coverage Report`. Will be formatted as follows:
 ```
 {
   "webpage1": {       // Webpage in domain, i.e. "https://weather.com"
