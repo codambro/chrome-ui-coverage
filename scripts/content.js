@@ -84,6 +84,7 @@ function myGetEventListeners(element) {
   if (
     !listeners.includes("click") &&
     !listeners.includes("onclick") &&
+    !(element.firstElementChild && element.firstElementChild.nodeName == "INPUT") && // skip labels around inputs
     window.getComputedStyle(element).cursor == "pointer" &&
     window.getComputedStyle(element.parentNode).cursor != "pointer"
   ) {
